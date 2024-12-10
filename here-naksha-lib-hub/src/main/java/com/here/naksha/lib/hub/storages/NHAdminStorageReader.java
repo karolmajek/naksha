@@ -20,11 +20,12 @@ package com.here.naksha.lib.hub.storages;
 
 import naksha.model.NakshaContext;
 import naksha.model.NakshaVersion;
-import com.here.naksha.lib.core.models.storage.Notification;
-import naksha.model.ReadRequest;
-import com.here.naksha.lib.core.models.storage.Result;
 import naksha.model.IReadSession;
 import java.util.concurrent.TimeUnit;
+
+import naksha.model.request.ReadRequest;
+import naksha.model.request.Response;
+import naksha.model.request.notification.Notification;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -141,7 +142,7 @@ public class NHAdminStorageReader implements IReadSession {
    */
   @Override
   @ApiStatus.AvailableSince(NakshaVersion.v2_0_7)
-  public @NotNull Result execute(@NotNull ReadRequest<?> readRequest) {
+  public @NotNull Response execute(@NotNull ReadRequest readRequest) {
     return session.execute(readRequest);
   }
 
@@ -153,7 +154,7 @@ public class NHAdminStorageReader implements IReadSession {
    */
   @Override
   @ApiStatus.AvailableSince(NakshaVersion.v2_0_7)
-  public @NotNull Result process(@NotNull Notification<?> notification) {
+  public @NotNull Response process(@NotNull Notification notification) {
     return session.process(notification);
   }
 

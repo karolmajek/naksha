@@ -24,7 +24,6 @@ import com.here.naksha.lib.core.lambdas.Fe1;
 import naksha.model.IReadSession;
 import naksha.model.IStorage;
 import naksha.model.IWriteSession;
-import com.here.naksha.lib.psql.PsqlStorage;
 import java.util.Map;
 import java.util.concurrent.Future;
 import org.jetbrains.annotations.ApiStatus;

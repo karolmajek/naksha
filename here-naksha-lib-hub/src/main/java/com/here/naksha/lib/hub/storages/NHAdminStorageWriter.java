@@ -20,11 +20,12 @@ package com.here.naksha.lib.hub.storages;
 
 import naksha.model.NakshaVersion;
 import com.here.naksha.lib.core.exceptions.StorageLockException;
-import com.here.naksha.lib.core.models.storage.Result;
-import naksha.model.WriteRequest;
 import naksha.model.IStorageLock;
 import naksha.model.IWriteSession;
 import java.util.concurrent.TimeUnit;
+
+import naksha.model.request.Response;
+import naksha.model.request.WriteRequest;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +48,7 @@ public class NHAdminStorageWriter extends NHAdminStorageReader implements IWrite
    */
   @Override
   @ApiStatus.AvailableSince(NakshaVersion.v2_0_7)
-  public @NotNull Result execute(@NotNull WriteRequest writeRequest) {
+  public @NotNull Response execute(@NotNull WriteRequest writeRequest) {
     return session.execute(writeRequest);
   }
 
@@ -104,7 +105,7 @@ public class NHAdminStorageWriter extends NHAdminStorageReader implements IWrite
   }
 
   @Override
-  public @NotNull Result executeBulkWriteFeatures(@NotNull WriteRequest<?, ?, ?> writeRequest) {
+  public @NotNull Response executeBulkWriteFeatures(@NotNull WriteRequest writeRequest) {
     throw new UnsupportedOperationException("bulk write is not supported");
   }
 
