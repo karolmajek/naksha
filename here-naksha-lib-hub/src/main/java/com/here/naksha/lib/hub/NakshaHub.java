@@ -28,21 +28,12 @@ import static com.here.naksha.lib.core.util.storage.ResultHelper.readFeatureFrom
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.here.naksha.lib.core.*;
-import com.here.naksha.lib.core.exceptions.NoCursor;
 import com.here.naksha.lib.core.exceptions.StorageNotFoundException;
 import com.here.naksha.lib.core.lambdas.Fe1;
 import com.here.naksha.lib.core.models.ExtensionConfig;
-import com.here.naksha.lib.core.models.XyzError;
 import com.here.naksha.lib.core.models.features.Extension;
 import naksha.model.*;
 import com.here.naksha.lib.core.models.naksha.Storage;
-import com.here.naksha.lib.core.models.naksha.XyzCollection;
-import com.here.naksha.lib.core.models.storage.EExecutedOp;
-import naksha.model.ErrorResult;
-import com.here.naksha.lib.core.models.storage.ForwardCursor;
-import com.here.naksha.lib.core.models.storage.Result;
-import com.here.naksha.lib.core.models.storage.WriteXyzCollections;
-import com.here.naksha.lib.core.models.storage.XyzCollectionCodec;
 import com.here.naksha.lib.core.util.IoHelp;
 import com.here.naksha.lib.core.util.json.Json;
 import com.here.naksha.lib.core.util.storage.ResultHelper;
@@ -52,11 +43,16 @@ import com.here.naksha.lib.extmanager.IExtensionManager;
 import com.here.naksha.lib.extmanager.helpers.AmazonS3Helper;
 import com.here.naksha.lib.hub.storages.NHAdminStorage;
 import com.here.naksha.lib.hub.storages.NHSpaceStorage;
-import com.here.naksha.lib.psql.PsqlStorage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import naksha.model.objects.NakshaCollection;
+import naksha.model.objects.NakshaFeature;
+import naksha.model.request.ErrorResponse;
+import naksha.model.request.Response;
+import naksha.model.request.Write;
+import naksha.model.request.WriteRequest;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -150,9 +146,9 @@ public class NakshaHub implements INaksha {
     // 2. Create all Admin collections in Admin DB
     final NakshaContext nakshaContext = new NakshaContext().withAppId(NakshaHubConfig.defaultAppName());
     nakshaContext.attachToCurrentThread();
-    try (final IWriteSession admin = getAdminStorage().newWriteSession(nakshaContext, true)) {
+    try (final IWriteSession admin = getAdminStorage().newWriteSession(SessionOptions.from(nakshaContext, true))) {
       logger.info("WriteCollections Request for {}, against Admin storage.", NakshaAdminCollection.ALL);
-      try (final Result wrResult = admin.execute(createAdminCollectionsRequest());
+      try (final Response wrResult = admin.execute(createAdminCollectionsRequest());
           final ForwardCursor<XyzCollection, XyzCollectionCodec> cursor =
               wrResult.getXyzCollectionCursor(); ) {
         while (cursor.hasNext() && cursor.next()) {
@@ -192,10 +188,14 @@ public class NakshaHub implements INaksha {
     return configSetup(nakshaContext, customCfg, configId);
   }
 
-  private static WriteXyzCollections createAdminCollectionsRequest() {
-    final WriteXyzCollections writeXyzCollections = new WriteXyzCollections();
-    NakshaAdminCollection.ALL.stream().map(XyzCollection::new).forEach(writeXyzCollections::create);
-    return writeXyzCollections;
+  private static WriteRequest createAdminCollectionsRequest() {
+    final WriteRequest writeRequest = new WriteRequest();
+    for (String collectionId : NakshaAdminCollection.ALL) {
+      final NakshaCollection collection = new NakshaCollection();
+      collection.setId(collectionId);
+      writeRequest.add(new Write().createCollection(null, collection));
+    }
+    return writeRequest;
   }
 
   private @Nullable NakshaHubConfig configSetup(
@@ -213,25 +213,25 @@ public class NakshaHub implements INaksha {
     try (final IWriteSession admin = getAdminStorage().newWriteSession(nakshaContext, true)) {
       if (customCfg != null) {
         // Custom config provided. Persist in AdminDB.
-        final Result wrResult =
+        final Response wrResult =
             admin.execute(upsertFeaturesRequest(NakshaAdminCollection.CONFIGS, List.of(customCfg)));
         if (wrResult == null) {
-          admin.rollback(true);
+          admin.rollback();
           throw unchecked(new Exception("Unable to add custom config in Admin DB. Null result!"));
-        } else if (wrResult instanceof ErrorResult er) {
-          admin.rollback(true);
+        } else if (wrResult instanceof ErrorResponse er) {
+          admin.rollback();
           throw unchecked(
               new Exception("Unable to add custom config in Admin DB. " + er.toString(), er.exception));
         }
-        admin.commit(true);
+        admin.commit();
         return customCfg;
       }
 
       // load custom + default config from DB (if available)
       NakshaHubConfig customDbCfg = null, defDbCfg = null;
       final List<String> cfgIdList = (configId != null) ? List.of(configId, DEF_CFG_ID) : List.of(DEF_CFG_ID);
-      final Result rdResult = admin.execute(readFeaturesByIdsRequest(NakshaAdminCollection.CONFIGS, cfgIdList));
-      if (rdResult instanceof ErrorResult er) {
+      final Response rdResult = admin.execute(readFeaturesByIdsRequest(NakshaAdminCollection.CONFIGS, cfgIdList));
+      if (rdResult instanceof ErrorResponse er) {
         throw unchecked(
             new Exception("Unable to read custom/default config from Admin DB. " + er, er.exception));
       } else {
@@ -268,23 +268,23 @@ public class NakshaHub implements INaksha {
         throw unchecked(new Exception("Unable to read default Config file. " + e.getMessage(), e));
       }
       // Persist default config in Admin DB
-      final Result wrResult = admin.execute(createFeatureRequest(NakshaAdminCollection.CONFIGS, defCfg, true));
+      final Response wrResult = admin.execute(createFeatureRequest(NakshaAdminCollection.CONFIGS, defCfg, true));
       if (wrResult == null) {
-        admin.rollback(true);
+        admin.rollback();
         throw unchecked(new Exception("Unable to add default config in Admin DB. Null result!"));
-      } else if (wrResult instanceof ErrorResult er) {
-        admin.rollback(true);
+      } else if (wrResult instanceof ErrorResponse er) {
+        admin.rollback();
         throw unchecked(
             new Exception("Unable to add default config in Admin DB. " + er.toString(), er.exception));
       }
-      admin.commit(true);
+      admin.commit();
       return defCfg; // return default config obtained from file
     }
   }
 
   @Override
   @ApiStatus.AvailableSince(NakshaVersion.v2_0_7)
-  public @NotNull <T extends XyzFeature> T getConfig() {
+  public @NotNull <T extends NakshaFeature> T getConfig() {
     return (T) this.nakshaHubConfig;
   }
 
@@ -364,10 +364,10 @@ public class NakshaHub implements INaksha {
   @Override
   @ApiStatus.AvailableSince(NakshaVersion.v2_0_7)
   public @NotNull IStorage getStorageById(final @NotNull String storageId) {
-    try (final IReadSession reader = getAdminStorage().newReadSession(NakshaContext.currentContext(), false)) {
-      try (final Result result =
-          reader.execute(readFeaturesByIdRequest(NakshaAdminCollection.STORAGES, storageId))) {
-        if (result instanceof ErrorResult er) {
+    try (final IReadSession reader = getAdminStorage().newReadSession(SessionOptions.from(NakshaContext.currentContext(), false))) {
+      final Response result =
+          reader.execute(readFeaturesByIdRequest(NakshaAdminCollection.STORAGES, storageId));
+        if (result instanceof ErrorResponse er) {
           throw unchecked(new Exception(
               "Exception fetching storage details for id " + storageId + ". " + er.message,
               er.exception));
@@ -377,7 +377,7 @@ public class NakshaHub implements INaksha {
           throw unchecked(new StorageNotFoundException(storageId));
         }
         return storageInstance(storage);
-      }
+
     }
   }
 
