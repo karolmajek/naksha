@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import naksha.base.JvmBoxingUtil;
-import naksha.model.NakshaError;
+import naksha.base.NakshaError;
 import naksha.model.SessionOptions;
 import naksha.model.objects.NakshaFeature;
 import naksha.model.objects.NakshaStorage;

@@ -8,7 +8,7 @@ class MapProxyRemovalTest {
     @Test
     fun shouldRemoveInIterator(){
         // Given
-        val mapProxy = MapProxy<Int, String>(Int::class, String::class)
+        val mapProxy = MapProxy<Int, String>(Int_Type, String_TYPE)
         mapProxy.putAll(mapOf(
             1 to "one",
             2 to "two",

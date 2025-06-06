@@ -21,10 +21,10 @@ package com.here.naksha.app.service.http.ops;
 import static com.here.naksha.common.http.apis.ApiParamsConst.TILE_TYPE_QUADKEY;
 
 import com.here.naksha.lib.core.models.geojson.WebMercatorTile;
-import naksha.geo.SpBoundingBox;
+import naksha.geo.GeoBoundingBox;
 import naksha.geo.SpPolygon;
-import naksha.model.NakshaError;
-import naksha.model.NakshaException;
+import naksha.base.NakshaError;
+import naksha.base.NakshaException;
 import org.jetbrains.annotations.NotNull;
 
 public class TileToBboxUtil {
@@ -49,7 +49,7 @@ public class TileToBboxUtil {
     }
   }
 
-  private static SpBoundingBox bboxForTile(String tileId) {
+  private static GeoBoundingBox bboxForTile(String tileId) {
     return WebMercatorTile.forQuadkey(tileId).getBBox(DONT_CLONE);
   }
 }

@@ -21,8 +21,8 @@ package com.here.naksha.lib.handlers.util;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
-import naksha.model.NakshaError;
-import naksha.model.NakshaException;
+import naksha.base.NakshaError;
+import naksha.base.NakshaException;
 import naksha.model.request.query.*;
 
 public class PropertyOperationUtil {

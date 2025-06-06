@@ -12,8 +12,8 @@ import com.here.naksha.lib.core.models.payload.events.QueryParameterList;
 import com.here.naksha.lib.core.util.ValueList;
 import java.util.*;
 
- import naksha.model.NakshaError;
- import naksha.model.NakshaException;
+ import naksha.base.NakshaError;
+ import naksha.base.NakshaException;
 import naksha.model.objects.NakshaFeature;
 import naksha.model.objects.NakshaProperties;
  import naksha.model.request.query.AnyOp;

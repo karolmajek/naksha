@@ -31,7 +31,7 @@ import java.util.zip.GZIPInputStream;
 import naksha.base.FromJsonOptions;
 import naksha.base.JvmBoxingUtil;
 import naksha.base.Platform;
-import naksha.model.NakshaError;
+import naksha.base.NakshaError;
 import naksha.model.objects.NakshaFeatureList;
 import naksha.model.request.ErrorResponse;
 import naksha.model.request.Response;

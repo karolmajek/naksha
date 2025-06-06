@@ -34,6 +34,7 @@ import com.here.naksha.lib.handlers.util.RequestTypesUtil;
 import java.util.*;
 import java.util.stream.Stream;
 import naksha.base.JvmBoxingUtil;
+import naksha.base.NakshaError;
 import naksha.base.StringList;
 import naksha.model.*;
 import naksha.model.objects.NakshaFeature;

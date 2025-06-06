@@ -27,6 +27,7 @@ import com.here.naksha.lib.core.INaksha;
 import com.here.naksha.lib.core.models.naksha.EventHandlerConfig;
 import com.here.naksha.test.common.assertions.PropertyQueryAssertions;
 import naksha.base.JvmInt64;
+import naksha.base.NakshaError;
 import naksha.model.*;
 
 import java.util.List;

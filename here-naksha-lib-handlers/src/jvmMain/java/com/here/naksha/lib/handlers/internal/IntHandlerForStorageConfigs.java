@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import naksha.base.JvmBoxingUtil;
 import naksha.model.NakshaContext;
-import naksha.model.NakshaError;
+import naksha.base.NakshaError;
 import naksha.model.SessionOptions;
 import naksha.model.objects.NakshaStorage;
 import naksha.model.objects.NakshaFeature;
