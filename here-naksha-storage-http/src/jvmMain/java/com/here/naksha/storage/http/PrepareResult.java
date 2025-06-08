@@ -49,7 +49,7 @@ class PrepareResult {
     if (error != null)
       return new ErrorResponse(new NakshaError(error, "Response http status code: " + httpResponse.statusCode()));
 
-    Object tuples = Platform.fromJSON(prepareBody(httpResponse), FromJsonOptions.DEFAULT);
+    Object tuples = Platform.fromJson(prepareBody(httpResponse), FromJsonOptions.DEFAULT);
     NakshaFeatureList features = JvmBoxingUtil.box(tuples, NakshaFeatureList.class);
     return new SuccessResponse(features);
   }

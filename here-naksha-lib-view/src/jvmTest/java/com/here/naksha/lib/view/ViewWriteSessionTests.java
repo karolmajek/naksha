@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-import java.util.Objects;
+
 import naksha.base.StringList;
 import naksha.geo.PointCoord;
 import naksha.geo.SpPoint;
@@ -17,7 +17,6 @@ import naksha.model.SessionOptions;
 import naksha.model.Tuple;
 import naksha.model.objects.NakshaCollection;
 import naksha.model.objects.NakshaFeature;
-import naksha.model.objects.NakshaFeatureList;
 import naksha.model.objects.StoreMode;
 import naksha.model.request.*;
 import org.jetbrains.annotations.NotNull;
