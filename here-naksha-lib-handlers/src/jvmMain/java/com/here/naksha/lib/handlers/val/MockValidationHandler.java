@@ -34,7 +34,7 @@ import com.here.naksha.lib.handlers.util.HandlerUtil;
 import java.util.ArrayList;
 import java.util.List;
 import naksha.base.JvmBoxingUtil;
-import naksha.model.mom.MomReference;
+import naksha.mom.v2.MomReference;
 import naksha.model.mom.MomReferenceList;
 import naksha.model.objects.NakshaFeature;
 import naksha.model.objects.NakshaProperties;

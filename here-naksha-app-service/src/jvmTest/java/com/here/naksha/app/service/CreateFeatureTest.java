@@ -323,7 +323,7 @@ class CreateFeatureTest extends ApiTest {
                 {
                 "type": "FeatureCollection",
                 "features": [
-                """ + Platform.toJSON(feature) + "]}",
+                """ + Platform.toJson(feature) + "]}",
             streamId);
 
     // Perform first assertions
@@ -342,7 +342,7 @@ class CreateFeatureTest extends ApiTest {
                 {
                 "type": "FeatureCollection",
                 "features": [
-                """ + Platform.toJSON(feature) + "]}",
+                """ + Platform.toJson(feature) + "]}",
             streamId);
 
     // Perform second assertions
@@ -357,7 +357,7 @@ class CreateFeatureTest extends ApiTest {
                 {
                 "type": "FeatureCollection",
                 "features": [
-                """ + Platform.toJSON(feature) + "]}",
+                """ + Platform.toJson(feature) + "]}",
             streamId);
 
     // Perform third assertions
