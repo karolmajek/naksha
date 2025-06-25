@@ -1,5 +1,6 @@
 package naksha.model
 
+import naksha.base.AnyList
 import naksha.base.AnyObject
 import naksha.base.Int64
 import naksha.jbon.JbEncoder
@@ -17,7 +18,13 @@ class PropertyFilterTest {
 
     companion object {
         lateinit var featureTuple : FeatureTuple
-        val nestedJson = AnyObject()
+        val nestedJson = AnyObject().apply {
+            this["bool"] = true
+            this["nullProps"] = null
+            this["array"] = AnyList("one", "two", "three", AnyObject().apply {
+                this["a"] = 1
+            })
+        }
 
         @JvmStatic
         @BeforeAll
@@ -26,12 +33,7 @@ class PropertyFilterTest {
             val feature = NakshaFeature()
             feature.properties["foo"] = "bar"
             feature.properties["number"] = 1.1
-            nestedJson["bool"] = true
-            nestedJson["nullProps"] = null
-            val innerJson = AnyObject()
-            innerJson["a"] = 1
-            nestedJson["array"] = arrayOf("one", "two", "three", innerJson)
-            feature.properties["json"] = nestedJson
+            feature.properties["json"] = nestedJson.copy<AnyObject>(true)
             // build tuple containing the feature
             val encoder = JbEncoder()
             val featureBytes = encoder.buildFeatureFromMap(feature)
@@ -264,7 +266,7 @@ class PropertyFilterTest {
     fun valueArrayContainsString() {
         val request = ReadFeatures()
         val filter = PropertyFilter(request)
-        request.query.properties = PQuery(Property("json","array"),AnyOp.CONTAINS, arrayOf("two", "three"))
+        request.query.properties = PQuery(Property("json","array"), AnyOp.CONTAINS, arrayOf("two", "three"))
         assertEquals(featureTuple,filter.filter(featureTuple))
     }
 

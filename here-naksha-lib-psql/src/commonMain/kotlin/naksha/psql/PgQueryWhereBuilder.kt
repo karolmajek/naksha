@@ -282,7 +282,7 @@ internal class PgQueryWhereBuilder(private val request: ReadFeatures) {
                     } else {
                         PgColumn.ofRowColumn(metaQuery.column) ?: throw NakshaException(
                             NakshaError.ILLEGAL_STATE,
-                            "Couldn't find PgColumn for TupleColumn: ${metaQuery.column.name}"
+                            "Couldn't find PgColumn for TupleColumn: ${metaQuery.column.columnName}"
                         )
                     }
                 val placeholder = placeholderForArg(metaQuery.value, pgColumn.type)
