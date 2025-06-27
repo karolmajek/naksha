@@ -20,7 +20,6 @@ package com.here.naksha.lib.core.models.storage;
 
 import java.util.HashMap;
 import java.util.Map;
-import naksha.base.JvmBoxingUtil;
 import naksha.model.request.ReadFeatures;
 import naksha.model.request.query.IPropertyQuery;
 import naksha.model.request.query.ISpatialQuery;
