@@ -181,7 +181,7 @@ class ActivityLogHandlerTest {
         featureId,
         "initial_uuid",
         null,
-        Action.CREATED,
+        Action.CREATE,
         Map.of(
             "op", "old feature",
             "magicNumber", 123
@@ -193,7 +193,7 @@ class ActivityLogHandlerTest {
         featureId,
         "new_uuid",
         "initial_uuid",
-        Action.UPDATED,
+        Action.UPDATE,
         Map.of(
             "op", "new feature",
             "magicBoolean", true
@@ -213,7 +213,7 @@ class ActivityLogHandlerTest {
             firstFeature -> firstFeature
                 .hasId(uuid(newFeature))
                 .hasActivityLogId(featureId)
-                .hasAction(Action.UPDATED.toString())
+                .hasAction(Action.UPDATE.toString())
                 .hasReversePatch("""
                     {
                       "add": 1,
@@ -240,7 +240,7 @@ class ActivityLogHandlerTest {
             secondFeature -> secondFeature
                 .hasId(uuid(oldFeature))
                 .hasActivityLogId(featureId)
-                .hasAction(Action.CREATED.toString())
+                .hasAction(Action.CREATE.toString())
                 .hasReversePatch(null)
         );
   }
@@ -252,14 +252,14 @@ class ActivityLogHandlerTest {
 
     // And: Space storage that will return two history features for client's request
     IReadSession readSession = spaceStorageSessionReturningHistoryFeatures(firstRequest,
-        nakshaFeature("id_1", "uuid_1", "puuid_1", Action.UPDATED),
-        nakshaFeature("id_2", "uuid_2", "puuid_2", Action.DELETED)
+        nakshaFeature("id_1", "uuid_1", "puuid_1", Action.UPDATE),
+        nakshaFeature("id_2", "uuid_2", "puuid_2", Action.DELETE)
     );
 
     // And: Space storage that will return two predecessors for any other request
     when(readSession.execute(not(eq(firstRequest)))).thenReturn(new SuccessResponse(NakshaFeatureList.fromList(List.of(
-        nakshaFeature("id_1", "puuid_1", null, Action.CREATED),
-        nakshaFeature("id_2", "puuid_2", null, Action.CREATED)
+        nakshaFeature("id_1", "puuid_1", null, Action.CREATE),
+        nakshaFeature("id_2", "puuid_2", null, Action.CREATE)
     ))));
 
     // When: Handler processes event with original client's request
@@ -297,11 +297,11 @@ class ActivityLogHandlerTest {
             first -> first
                 .hasId("uuid_2")
                 .hasActivityLogId("id_2")
-                .hasAction(Action.DELETED.toString()),
+                .hasAction(Action.DELETE.toString()),
             second -> second
                 .hasId("uuid_1")
                 .hasActivityLogId("id_1")
-                .hasAction(Action.UPDATED.toString())
+                .hasAction(Action.UPDATE.toString())
         );
   }
 
@@ -315,7 +315,7 @@ class ActivityLogHandlerTest {
         "featureId",
         "uuid",
         null,
-        Action.CREATED
+        Action.CREATE
     ));
 
     // When: handler processes event bearing such request
@@ -324,7 +324,7 @@ class ActivityLogHandlerTest {
     // Then: result does not bear any reverse patch
     assertThatResult(result)
         .hasActivityFeatures(feature -> feature
-            .hasAction(Action.CREATED.toString())
+            .hasAction(Action.CREATE.toString())
             .hasId("uuid")
             .hasActivityLogId("featureId")
             .hasReversePatch(null)
@@ -342,13 +342,13 @@ class ActivityLogHandlerTest {
             "featureId",
             "delete_uuid",
             "create_uuid",
-            Action.DELETED
+            Action.DELETE
         ),
         nakshaFeature(
             "featureId",
             "create_uuid",
             null,
-            Action.CREATED
+            Action.CREATE
         )
     );
 
@@ -359,12 +359,12 @@ class ActivityLogHandlerTest {
     assertThatResult(result)
         .hasActivityFeatures(
             first -> first
-                .hasAction(Action.DELETED.toString())
+                .hasAction(Action.DELETE.toString())
                 .hasId("delete_uuid")
                 .hasActivityLogId("featureId")
                 .hasReversePatch(null),
             second -> second
-                .hasAction(Action.CREATED.toString())
+                .hasAction(Action.CREATE.toString())
                 .hasId("create_uuid")
                 .hasActivityLogId("featureId")
                 .hasReversePatch(null)
