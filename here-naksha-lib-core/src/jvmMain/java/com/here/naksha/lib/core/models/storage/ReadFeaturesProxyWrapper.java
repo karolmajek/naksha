@@ -26,6 +26,8 @@ import naksha.model.request.query.ISpatialQuery;
 import naksha.model.request.query.ITagQuery;
 import org.jetbrains.annotations.NotNull;
 
+import static naksha.base.Platform.forClass;
+
 /**
  *
  *
@@ -103,6 +105,6 @@ public class ReadFeaturesProxyWrapper extends ReadFeatures {
   }
 
   public static ReadFeaturesProxyWrapper proxyWrapperOf(@NotNull ReadFeatures readFeatures){
-    return JvmBoxingUtil.box(readFeatures, ReadFeaturesProxyWrapper.class);
+    return readFeatures.proxy(forClass(ReadFeaturesProxyWrapper.class));
   }
 }
