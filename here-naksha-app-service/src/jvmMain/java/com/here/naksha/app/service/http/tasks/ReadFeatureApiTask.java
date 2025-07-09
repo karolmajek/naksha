@@ -331,8 +331,6 @@ public class ReadFeatureApiTask<T extends XyzResponse> extends AbstractApiTask<X
             .withTagQuery(tagQuery);
     rdRequest.setCollectionIds(StringList.of(spaceId));
     rdRequest.setLimit(limit);
-    rdRequest.getQuery().setProperties(propertyQuery);
-    rdRequest.getQuery().setTags(tagQuery);
 
     // Forward request to NH Space Storage reader instance
     final Response response = executeReadRequestFromSpaceStorage(rdRequest);
