@@ -1,0 +1,28 @@
+# Requirements for Naksha Python JAR Library Example
+# Python dependencies for using Naksha's Java API directly
+
+# Core JVM integration
+jpype1>=1.4.0
+
+# Database connectivity
+psycopg2-binary>=2.9.0
+
+# Geospatial operations
+shapely>=2.0.0
+
+# Data analysis and manipulation
+pandas>=1.5.0
+numpy>=1.21.0
+
+# JSON handling
+jsonschema>=4.0.0
+
+# Logging and utilities
+python-dateutil>=2.8.0
+
+# Optional: For advanced geometry operations
+pyproj>=3.0.0
+geopandas>=0.12.0
+
+# Optional: For performance monitoring
+psutil>=5.8.0 
